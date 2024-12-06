@@ -11,6 +11,8 @@ class TinyFlags:
         self.bit_widths = {}
         self.option_mappings = {}
         self.current_position = 0
+        if fields is not None:
+            self.setup_fields()
 
     def setup_fields(self):
         """

@@ -9,7 +9,7 @@ class BitField:
 
     def set_bit(self, position, bit_value):
         """Set a bit at given position (0-31/63) to 0 or 1"""
-        self.validations.validate_bit_with_position(position, bit_value)
+        self.validations.validate_position(position)
 
         if bit_value:
             self.value |= (1 << position)
@@ -22,16 +22,16 @@ class BitField:
         self.validations.validate_position(position)
         return (self.value >> position) & 1
 
-    def set_bits(self, start_position, width, bit_value):
+    def set_bits(self, start_position, width, bit_values):
         """Set multiple bits starting at position with given width"""
-        self.validations.validate_start_position_and_width(start_position, width, bit_value)
+        self.validations.validate_start_position_and_width(start_position, width)
 
         # Create mask and clear bits in range
         mask = ((1 << width) - 1) << start_position
         self.value &= ~mask
 
         # Set new value
-        self.value |= (bit_value & ((1 << width) - 1)) << start_position
+        self.value |= (bit_values & ((1 << width) - 1)) << start_position
         return self.value
 
     def get_bits(self, start_position, width):

@@ -1,15 +1,14 @@
 # tiny_flags
-A lightweight Python package for efficient settings management and manipulation. Easily handle language preferences, settings, and other flag-based configurations using minimal memory.
-Still under construction, but development package works as it should.
+A lightweight Python package for efficient settings management and manipulation.
+Easily handle language preferences, settings, and other flag-based configurations using minimal memory.
 
 Features:
-32-bit and 64-bit bitfield support (reserve one 32/64 bit integer in database tha)
+32-bit and 64-bit bitfield support (reserve one 32/64 bit integer)
 Automatic bit position management
 Boolean flags and multi-option settings
-Ordered dictionary configuration
-Type-safe operations
+Ordered dictionary configuration for easy use
 Memory efficient
-Perfect for storing for example app settings that do not need indexing on DB.
+Perfect for storing app settings, where complex queries are not required.
 
 Installation:
 Install using pip:
@@ -44,9 +43,6 @@ print(manager.get_value('language'))       # 'spanish'
 print(manager.get_value('dark_mode'))      # True
 print(manager.get_value('notifications'))  # True
 
-## Detailed Usage
-
-
 ## Reading boolean flags
 is_dark = manager.get_value('dark_mode')
 Multi-option Settings
@@ -55,6 +51,12 @@ fields = OrderedDict([
     ('theme', ['light', 'dark', 'system']),
     ('language', ['en', 'es', 'fr', 'de'])
 ])
+
+## Detailed Usage
+There are of course drawbacks on using a bitfield for settings.
+If you need to do complex queries on the settings, for those kinds of settings it is not the best solution.
+Indexing will index the full integer not the individual bits.
+It is might make it easier to use even number of options in the list, just name it in some way that makes sense.
 
 ## Testing and development
 Setup Development Environment & clone the repository
@@ -71,9 +73,7 @@ Distributed under the MIT License. See LICENSE for more information.
 
 ## Todo
 Set initial values for lists
-Optimize validations
 Add more option mappings possibilities
 See if 32/64bit values should have a forced type
 Test with actual DB (MongoDB 32/64 bit ints)
-Clean up README.md
 Add linting to project
