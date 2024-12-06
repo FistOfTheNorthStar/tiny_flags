@@ -72,7 +72,7 @@ print(manager.get_value('dark_mode'))      # True
 print(manager.get_value('notifications'))  # True
 ```
 
-## Some details and thoughts on using tiny-flags
+## Some details and thoughts on using tiny_flags
 
 When using a database there are of course drawbacks on using a bitfield for settings for example if you need complex queries on the bits then put them in their own columns.
 If you need to do complex queries on the settings, for those kinds of settings it is not the best solution.
@@ -83,8 +83,8 @@ Changing settings later might be cumbersome, but if popularity picks up I can ad
 
 Setup Development Environment & clone the repository
 ```
-git clone https://github.com/yourusername/tiny-flags.git
-cd tiny-flags
+git clone https://github.com/FistOfTheNorthStar/tiny_flags
+cd tiny_flags
 ```
 Install `pip install -e .`
 Running Tests `pytest tests/`
