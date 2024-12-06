@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from typing import Any, List, Union
 
-from bitfield import BitField
+from .bitfield import BitField
 
 
 class TinyFlags:
