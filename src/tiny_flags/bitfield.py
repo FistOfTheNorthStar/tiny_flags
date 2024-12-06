@@ -1,4 +1,4 @@
-from validations import BitFieldValidation
+from .validations import BitFieldValidation
 
 
 class BitField:
