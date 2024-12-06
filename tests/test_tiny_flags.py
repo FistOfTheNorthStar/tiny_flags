@@ -12,18 +12,17 @@ def manager():
         ('notifications', True)
     ])
     manager = TinyFlags(fields)
-    manager.setup_fields()
     return manager
 
 
 def test_boolean_fields(manager):
     # Test initial values
-    assert manager.get_value('dark_mode') == False
-    assert manager.get_value('notifications') == True
+    assert manager.get_value('dark_mode') is False
+    assert manager.get_value('notifications') is True
 
     # Test setting values
     manager.set_value('dark_mode', True)
-    assert manager.get_value('dark_mode') == True
+    assert manager.get_value('dark_mode') is True
 
 
 def test_option_fields(manager):
@@ -53,7 +52,8 @@ def test_option_fields(manager):
 
 
 def test_invalid_field():
-    manager = TinyFlags()
+    fields = OrderedDict([])
+    manager = TinyFlags(fields)
     with pytest.raises(ValueError):
         manager.get_value('nonexistent_field')
 
@@ -61,12 +61,13 @@ def test_invalid_field():
 def test_bit_width_calculation():
     fields = OrderedDict([
         ('two_options', ['a', 'b']),  # Should use 1 bit
+        ('three_options', ['a', 'b', 'c']),  # Should use 2 bits
         ('four_options', ['a', 'b', 'c', 'd'])  # Should use 2 bits
     ])
     manager = TinyFlags(fields)
-    manager.setup_fields()
 
     assert manager.bit_widths['two_options'] == 1
+    assert manager.bit_widths['three_options'] == 2
     assert manager.bit_widths['four_options'] == 2
 
 
@@ -76,7 +77,6 @@ def test_bitfield_persistence():
         ('flag', True)
     ])
     manager = TinyFlags(fields)
-    manager.setup_fields()
 
     # Set some values
     manager.set_value('option', 'b')
@@ -87,7 +87,6 @@ def test_bitfield_persistence():
 
     # Create new manager with same fields
     new_manager = TinyFlags(fields)
-    new_manager.setup_fields()
     new_manager.bitfield.value = value
 
     # Check values persisted

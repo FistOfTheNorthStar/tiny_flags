@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 120
+extend-ignore = E203  # Ignore whitespace before ':' (Black handles this)
+exclude = .git,__pycache__,build,dist,*.egg
