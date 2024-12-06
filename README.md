@@ -85,11 +85,9 @@ Setup Development Environment & clone the repository
 ```
 git clone https://github.com/yourusername/tiny-flags.git
 cd tiny-flags
-Install requirements (just pytest atm)
-pip install -e .
-Running Tests
-pytest tests/
 ```
+Install `pip install -e .`
+Running Tests `pytest tests/`
 
 There is also a `dev_lint.sh` script lints and installs the development version. Check it out if you are interested.
 
