@@ -1,5 +1,6 @@
 from collections import OrderedDict
-from typing import Union, List, Any
+from typing import Any, List, Union
+
 from bitfield import BitField
 
 
@@ -33,9 +34,7 @@ class TinyFlags:
                 bit_width = (len(options) - 1).bit_length()
                 self.bit_positions[field_name] = self.current_position
                 self.bit_widths[field_name] = bit_width
-                self.option_mappings[field_name] = {
-                    opt: idx for idx, opt in enumerate(options)
-                }
+                self.option_mappings[field_name] = {opt: idx for idx, opt in enumerate(options)}
                 self.bitfield.set_bits(self.current_position, bit_width, 0)
                 self.current_position += bit_width
             else:

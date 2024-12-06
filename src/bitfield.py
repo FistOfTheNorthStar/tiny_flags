@@ -12,7 +12,7 @@ class BitField:
         self.validations.validate_position(position)
 
         if bit_value:
-            self.value |= (1 << position)
+            self.value |= 1 << position
         else:
             self.value &= ~(1 << position)
         return self.value
