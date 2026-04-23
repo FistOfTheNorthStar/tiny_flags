@@ -1,1 +1,1 @@
-from .tiny_flags import *
+from .tiny_flags import TinyFlags as TinyFlags
