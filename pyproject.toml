@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=82.0.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tiny_flags"
-version = "1.0.0"
+version = "2.0.0"
 authors = [
   { name="Kaarle Kulvik", email="k.kulvik@gmail.com" },
 ]
 description = "Map options/flags to methods using 32 or 64bit integers for optimized state management."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -23,21 +23,25 @@ Issues = "https://github.com/FistOfTheNorthStar/tiny_flags/issues"
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.3.4",
-    "flake8>=7.1.1",
-    "black>=24.10.0",
-    "isort>=5.13.2",
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "mypy>=1.20.2",
+    "ruff>=0.15.11",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.black]
+[tool.ruff]
 line-length = 120
-target-version = ['py37']
-include = '\.pyi?$'
+target-version = "py313"
 
-[tool.isort]
-profile = "black"
-line_length = 120
-multi_line_output = 3
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

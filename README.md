@@ -1,102 +1,96 @@
 # tiny_flags
 
-A lightweight Python package for efficient settings management and manipulation. Easily handle language preferences, settings, and other flag-based configurations using minimal memory.
+A lightweight Python package for efficient settings management using bitfields. Handle language preferences, feature flags, and other configurations using a single 32 or 64-bit integer.
 
 ### Features
 
-* 32-bit and 64-bit bitfield support (reserve one 32/64 bit integer)
+* 32-bit and 64-bit bitfield support
 * Automatic bit position management
 * Boolean flags and multi-option settings
-* Ordered dictionary configuration for easy use
-* Memory efficient
-* Perfect for storing app settings where complex queries are not required
-
+* Ordered dictionary configuration
+* Zero runtime dependencies
+* Type-checked with mypy strict mode
 
 ## Installation
-
-Install using `pip`:
 
 ```bash
 pip install tiny_flags
 ```
 
-### How to use?
+## Quick Start
 
-Requires `OrderedDict`
-
-```
+```python
 from collections import OrderedDict
 from tiny_flags import TinyFlags
-```
 
-## Define your settings
-
-```
+# Define your settings
 fields = OrderedDict([
-    ('language', ['english', 'spanish', 'french']),  # Uses 2 bits, might make sense to add even number and mark the last as '_option'
-    ('dark_mode', False),                            # Uses 1 bit, initial value
-    ('notifications', True)                          # Uses 1 bit, initial value
+    ('language', ['english', 'spanish', 'french']),  # Uses 2 bits
+    ('dark_mode', False),                            # Uses 1 bit
+    ('notifications', True)                          # Uses 1 bit
 ])
-```
 
-You can easily create your settings structure by looking at the below example. One should think ahead before implementing the structure of the ordered dictionary and it might make sense to reserve some extra for the list options for later use.
-NOTE!: The order matters and changing it later can create some issues in migrating to a new structure. Think ahead in what you need, don't remove rather just add. If you don't need an option then perhaps leave it and rename with _ prefix, and just ignore it.
-Boolean flags are easy, it is just True or False, but the list options take up the same space whether odd or even number of items given. It might make sense for you to add the last option in such list and use _ prefix as for deprecated options mentioned above.
-Booleans use 1 bit position, and option list uses 1 bit position for every 2 items (even with 1 item 1 bit position is reserved, so be careful about odd numbers)
-
-## Initialize manager
-
-```
+# Initialize (default 32-bit, pass bits64=True for 64-bit)
 manager = TinyFlags(fields)
-```
 
-Default value is 32bit, but give True for 64bit, `TinyFlags(fields, True)`. Check that your environment supports 64bit integers before trying to use them.
-
-## Set values
-
-```
+# Set values
 manager.set_value('language', 'spanish')
-```
-For options lists just select the category first followed by the option you wish to set.
-
-```
 manager.set_value('dark_mode', True)
+
+# Get values
+manager.get_value('language')        # 'spanish'
+manager.get_value('dark_mode')       # True
+manager.get_value('notifications')   # True
+
+# Persist the entire state as a single integer
+state = manager.bitfield.value       # e.g. 13
+
+# Restore from that integer later
+new_manager = TinyFlags(fields)
+new_manager.bitfield.value = state
+new_manager.get_value('language')    # 'spanish'
 ```
-For boolean flags, just use the key and give `True/False` to enable/disable.
 
-## Get values
+## How Bit Widths Work
 
-```
-print(manager.get_value('language'))       # 'spanish'
-print(manager.get_value('dark_mode'))      # True
-print(manager.get_value('notifications'))  # True
-```
+| Field type | Bits used | Example |
+|------------|-----------|---------|
+| Boolean | 1 | `('dark_mode', False)` |
+| 2 options | 1 | `('toggle', ['on', 'off'])` |
+| 3-4 options | 2 | `('lang', ['en', 'es', 'fr'])` |
+| 5-8 options | 3 | 8 options fit in 3 bits |
+| 9-16 options | 4 | 16 options fit in 4 bits |
 
-## Some details and thoughts on using tiny_flags
+Option lists must have at least 2 items. Bit allocation is always based on powers of 2, so odd-count lists leave unused slots. Consider reserving those for future options.
 
-When using a database there are of course drawbacks on using a bitfield for settings for example if you need complex queries on the bits then put them in their own columns.
-If you need to do complex queries on the settings, for those kinds of settings it is not the best solution.
-Indexing will index the full integer not the individual bits.
-Changing settings later might be cumbersome, but if popularity picks up I can add a migration tool or if you have pioneering spirit please contribute.
+## Design Considerations
 
-## Testing and development
+**Order matters.** The `OrderedDict` key order determines bit positions. Changing the order after data is persisted will corrupt stored values. When evolving your schema:
+- Add new fields at the end
+- Don't remove fields — rename unused ones with a `_` prefix and ignore them
 
-Setup Development Environment & clone the repository
-```
+**Database storage.** The bitfield value is a single integer, making it efficient to store. However, you cannot query individual flags with database indexes — the index covers the whole integer. If you need complex queries on specific flags, store those as separate columns.
+
+**32 vs 64-bit.** Default is 32-bit (up to 32 flags/option bits). Pass `bits64=True` for 64-bit support. Ensure your storage layer supports 64-bit integers before using this mode.
+
+## Development
+
+```bash
 git clone https://github.com/FistOfTheNorthStar/tiny_flags
 cd tiny_flags
+pip install -e ".[dev]"
 ```
-Install `pip install -e .`
-Running Tests `pytest tests/`
 
-There is also a `dev_lint.sh` script lints and installs the development version. Check it out if you are interested.
+### Run checks
+
+```bash
+pytest --cov=tiny_flags           # tests + coverage
+ruff check src/ tests/            # linting
+mypy src/                         # type checking
+```
 
 Contributions are welcome.
 
 ## License
-Distributed under the MIT License. See LICENSE for more information.
 
-## Todo for the future
-Add more option mappings possibilities
-See if 32/64bit values should have a forced type
-Test with actual DB (MongoDB 32/64 bit ints)
+Distributed under the MIT License. See LICENSE for more information.
